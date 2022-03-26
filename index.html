@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music player</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"
+    integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w=="
+    crossorigin="anonymous" />
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+  <div class="player">
+    <!-- Dashboard -->
+    <div class="dashboard">
+      <!-- Header -->
+      <header>
+        <h4>Now playing:</h4>
+        <h2>String 57th & 9th</h2>
+      </header>
+
+      <!-- CD -->
+      <div class="cd">
+        <div class="cd-thumb" style="background-image: url('https://i.ytimg.com/vi/jTLhQf5KJSc/maxresdefault.jpg')">
+        </div>
+      </div>
+
+      <!-- Control -->
+      <div class="control">
+        <div class="btn btn-repeat">
+          <i class="fas fa-redo"></i>
+        </div>
+        <div class="btn btn-prev">
+          <i class="fas fa-step-backward"></i>
+        </div>
+        <div class="btn btn-toggle-play">
+          <i class="fas fa-pause icon-pause"></i>
+          <i class="fas fa-play icon-play"></i>
+        </div>
+        <div class="btn btn-next">
+          <i class="fas fa-step-forward"></i>
+        </div>
+        <div class="btn btn-random">
+          <i class="fas fa-random"></i>
+        </div>
+      </div>
+
+      <input id="progress" class="progress" type="range" value="0" step="1" min="0" max="100">
+
+      <audio id="audio" src=""></audio>
+    </div>
+
+    <!-- Playlist -->
+    <div class="playlist">
+
+    </div>
+
+
+  </div>
+
+  <script>
+    const $ = document.querySelector.bind(document);
+    const $$ = document.querySelectorAll.bind(document);
+
+    const PLAYER_STORAGE_KEY = 'THANG_NGUYEN'; 
+
+    const heading = $('header h2')
+    const cdThumb = $('.cd-thumb')
+    const audio = $('#audio')
+    const cd = $('.cd')
+    const playBtn = $('.btn-toggle-play')
+    const player = $('.player')
+    const progress = $('#progress')
+    const nextBtn = $('.btn-next')
+    const prevBtn = $('.btn-prev')
+    const randomBtn = $('.btn-random')
+    const repeatBtn = $('.btn-repeat')
+    const playlist = $('.playlist')
+
+    const app = {
+      currentIndex: 0,
+      isPlaying: false,
+      isRandom: false,
+      isRepeat: false,
+      config: JSON.parse(localStorage.getItem(PLAYER_STORAGE_KEY)) || {},
+
+      songs: [
+        {
+          name: 'Bad Boy',
+          singer: 'Big Bang',
+          path: './songs/BadBoy.mp3',
+          image: './images/bigbang.png'
+        },
+        {
+          name: 'Bae Bae',
+          singer: 'Big Bang',
+          path: './songs/BaeBae.mp3',
+          image: './images/bigbang.png'
+        },
+        {
+          name: 'Flower Road',
+          singer: 'Big Bang',
+          path: './songs/FlowerRoad.mp3',
+          image: './images/bigbang.png'
+        },
+        {
+          name: 'FxxkIt',
+          singer: 'Big Bang',
+          path: './songs/FxxkIt.mp3',
+          image: './images/bigbang.png'
+        },
+        {
+          name: 'Girlfriend',
+          singer: 'Big Bang',
+          path: './songs/Girlfriend.mp3',
+          image: './images/bigbang.png'
+        },
+        {
+          name: 'If You',
+          singer: 'Big Bang',
+          path: './songs/IfYou.mp3',
+          image: './images/bigbang.png'
+        },
+        {
+          name: 'Last Dance',
+          singer: 'Big Bang',
+          path: './songs/LastDance.mp3',
+          image: './images/bigbang.png'
+        },
+        {
+          name: 'Lets not fall in love',
+          singer: 'Big Bang',
+          path: './songs/LetSNotFallInLove.mp3',
+          image: './images/bigbang.png'
+        },
+        {
+          name: 'Loser',
+          singer: 'Big Bang',
+          path: './songs/Loser.mp3',
+          image: './images/bigbang.png'
+        },
+        {
+          name: 'Sober',
+          singer: 'Big Bang',
+          path: './songs/Sober.mp3',
+          image: './images/bigbang.png'
+        },
+        {
+          name: 'Stupid Liar',
+          singer: 'Big Bang',
+          path: './songs/StupidLiar.mp3',
+          image: './images/bigbang.png'
+        },
+        {
+          name: 'We like 2 party',
+          singer: 'Big Bang',
+          path: './songs/WeLike2Party.mp3',
+          image: './images/bigbang.png'
+        },
+        {
+          name: 'Bang Bang Bang',
+          singer: 'Big Bang',
+          path: './songs/BangBangBang.mp3',
+          image: './images/bigbang.png'
+        },
+        {
+          name: 'Blue',
+          singer: 'Big Bang',
+          path: './songs/Blue.mp3',
+          image: './images/bigbang.png'
+        },
+        {
+          name: 'FantasicBaby',
+          singer: 'Big Bang',
+          path: './songs/FantasicBaby.mp3',
+          image: './images/bigbang.png'
+        },
+        {
+          name: 'HaruHaru',
+          singer: 'Big Bang',
+          path: './songs/HaruHaru.mp3',
+          image: './images/bigbang.png'
+        },
+        {
+          name: 'LaLaLa',
+          singer: 'Big Bang',
+          path: './songs/LaLaLa.mp3',
+          image: './images/bigbang.png'
+        },
+        {
+          name: 'LastFarewell',
+          singer: 'Big Bang',
+          path: './songs/LastFarewell.mp3',
+          image: './images/bigbang.png'
+        },
+        {
+          name: 'Lies',
+          singer: 'Big Bang',
+          path: './songs/Lies.mp3',
+          image: './images/bigbang.png'
+        },
+        {
+          name: 'Love Song',
+          singer: 'Big Bang',
+          path: './songs/LoveSong.mp3',
+          image: './images/bigbang.png'
+        },
+        {
+          name: 'Monster',
+          singer: 'Big Bang',
+          path: './songs/Monster.mp3',
+          image: './images/bigbang.png'
+        },
+        {
+          name: 'Heaven',
+          singer: 'Big Bang',
+          path: './songs/MyHeaven.mp3',
+          image: './images/bigbang.png'
+        },
+        {
+          name: 'Tonight',
+          singer: 'Big Bang',
+          path: './songs/Tonight.mp3',
+          image: './images/bigbang.png'
+        },
+        {
+          name: 'WeBelongTogether',
+          singer: 'Big Bang',
+          path: './songs/WeBelongTogether.mp3',
+          image: './images/bigbang.png'
+        },
+
+      ],
+
+      setConfig: function (key, value) {
+        this.config[key] = value;
+        localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(this.config));
+      },
+
+      render: function () {
+        const htmls = this.songs.map((song, index) => {
+          return `
+            <div class="song ${index === this.currentIndex ? 'active' : ''}" data-index="${index}">
+                <div class="thumb" 
+                    style="background-image: url('${song.image}')">
+                </div>
+              <div class="body">
+                  <h3 class="title">${song.name}</h3>
+                  <p class="author">${song.singer}</p>
+              </div>
+              <div class="option">
+                  <i class="fas fa-ellipsis-h"></i>
+              </div>
+            </div>
+          `
+        })
+        playlist.innerHTML = htmls.join('')
+      },
+
+      defineProperties: function () {
+        Object.defineProperty(this, 'currentSong', {
+          get: function () {
+            return this.songs[this.currentIndex]
+          }
+        })
+      },
+
+      handleEvents: function () {
+        const _this = this
+        const cdWidth = cd.offsetWidth
+
+        const cdThumbAnimate = cdThumb.animate([
+          {
+            transform: 'rotate(1111111111111deg)'
+          }
+        ], {
+          duration: 110000000000000,
+          interaction: Infinity
+        })
+        cdThumbAnimate.pause()
+
+        document.onscroll = function () {
+          const scrollTop = window.scrollY || document.documentElement.scrollTop
+          const newCdWidth = cdWidth - scrollTop
+
+          cd.style.width = newCdWidth > 0 ? newCdWidth + 'px' : 0
+          cd.style.opacity = newCdWidth / cdWidth
+        }
+
+        playBtn.onclick = function () {
+          if (_this.isPlaying) {
+            audio.pause()
+          }
+          else {
+            audio.play()
+          }
+        }
+
+        audio.onplay = function () {
+          _this.isPlaying = true
+          player.classList.add('playing')
+          cdThumbAnimate.play()
+        }
+        audio.onpause = function () {
+          _this.isPlaying = false
+          player.classList.remove('playing')
+          cdThumbAnimate.pause()
+        }
+
+        audio.ontimeupdate = function () {
+          if (audio.duration) {
+            const progressPercent = Math.floor(audio.currentTime / audio.duration * 100)
+            progress.value = progressPercent
+          }
+        }
+
+        progress.onchange = function (e) {
+          const seekTime = audio.duration / 100 * e.target.value
+          audio.currentTime = seekTime
+        }
+
+        nextBtn.onclick = function () {
+          if (_this.isRandom) {
+            _this.playRandomSong()
+          }
+          else {
+            _this.nextSong()
+          }
+          audio.play()
+          _this.render()
+          _this.scrollToActiveSong()
+        }
+
+        prevBtn.onclick = function () {
+          if (_this.isRandom) {
+            _this.playRandomSong()
+          }
+          else {
+            _this.prevSong()
+          }
+          audio.play()
+          _this.render()
+          _this.scrollToActiveSong()
+        }
+
+        randomBtn.onclick = function (e) {
+          _this.isRandom = !_this.isRandom
+          _this.setConfig('isRandom', _this.isRandom)
+          randomBtn.classList.toggle('active', _this.isRandom)
+        }
+
+        repeatBtn.onclick = function (e) {
+          _this.isRepeat = !_this.isRepeat
+          _this.setConfig('isRepeat', _this.isRepeat)
+          repeatBtn.classList.toggle('active', _this.isRepeat)
+        }
+
+        audio.onended = function () {
+          if (_this.isRepeat) {
+            audio.play()
+          }
+          else {
+            nextBtn.click()
+          }
+        }
+
+        playlist.onclick = function (e) {
+          const songNode = e.target.closest('.song:not(.active)')
+
+          if(songNode || e.target.closest('.option') ){
+            if(songNode){
+              _this.currentIndex = Number(songNode.dataset.index)
+              _this.loadCurrentSong()
+              _this.render()
+              audio.play()
+            }
+            if(e.target.closest('.option')){
+
+            }
+          }
+        }
+      },
+
+      scrollToActiveSong: function () {
+        setTimeout(function () {
+          $('.song.active').scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest'
+          })
+        }, 300)
+      },
+
+      loadCurrentSong: function () {
+
+        heading.textContent = this.currentSong.name
+        cdThumb.style.backgroundImage = `url('${this.currentSong.image}')`
+        audio.src = this.currentSong.path
+      },
+      
+      loadConfig: function () {
+        this.isRandom = this.config.isRandom
+        this.isRepeat = this.config.isRepeat
+      },
+
+      nextSong: function () {
+        this.currentIndex++
+        if (this.currentIndex >= this.songs.length) {
+          this.currentIndex = 0
+        }
+        this.loadCurrentSong()
+      },
+
+      prevSong: function () {
+        this.currentIndex--
+        if (this.currentIndex < 0) {
+          this.currentIndex = this.songs.length - 1
+        }
+        this.loadCurrentSong()
+      },
+
+      playRandomSong: function () {
+        let newIndex
+        do {
+          newIndex = Math.floor(Math.random() * this.songs.length)
+        }
+        while (newIndex === this.currentIndex)
+
+        this.currentIndex = newIndex
+        this.loadCurrentSong()
+      },
+
+      start: function () {
+        this.loadConfig()
+
+        this.defineProperties()
+
+        this.handleEvents()
+
+        this.loadCurrentSong()
+
+        this.render()
+
+        randomBtn.classList.toggle('active', _this.isRandom)
+        repeatBtn.classList.toggle('active', _this.isRepeat)
+
+      }
+
+    }
+
+    app.start()
+  </script>
+
+</body>
+
+</html>
