@@ -1,5 +1,5 @@
 :root {
-  --primary-color: #258996;
+  --primary-color:#258996;
   --text-color: #333;
 }
 
@@ -10,7 +10,7 @@
 }
 
 body {
-  background-color: rgb(228, 228, 228);
+  background: linear-gradient(to bottom, #b4b4b4, #232223 );
 }
 
 html {
